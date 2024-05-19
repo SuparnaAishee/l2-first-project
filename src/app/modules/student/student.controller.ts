@@ -1,13 +1,29 @@
 import { Request, Response } from 'express';
 import { StudentServices } from './student.service';
 
+import Joi from 'joi';
+import studentValidationSchema from './student.validation';
+
 //controll creating for create-student
 const createStudent = async (req: Request, res: Response) => {
   try {
     const { student: studentData } = req.body;
 
+    //data validation using joi
+    const { error,value } = studentValidationSchema.validate(studentData);
+
     //will call service fun to send this data by post
-    const result = await StudentServices.createStudentIntoDB(studentData);
+    const result = await StudentServices.createStudentIntoDB(value);
+
+    //console.log({error},{value});
+
+    if (error) {
+      res.status(500).json({
+        sucess: false,
+        message: 'something went wrong',
+        error: error.details,
+      });
+    }
 
     //send response
     res.status(200).json({
@@ -16,7 +32,11 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (err) {
-    console.log(err);
+    res.status(500).json({
+      sucess: false,
+      message: 'something went wrong',
+     error:err,
+    });
   }
 };
 
