@@ -25,7 +25,7 @@ const zodparseData = studentValidationSchema.parse(studentData);
     //will call service fun to send this data by post
     const result = await StudentServices.createStudentIntoDB(zodparseData);
 
-    //console.log({error},{value});
+   
 
     // if (error) {
     //   res.status(500).json({
