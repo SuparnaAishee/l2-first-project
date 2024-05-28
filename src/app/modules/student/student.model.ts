@@ -1,13 +1,17 @@
 import { Schema, model } from 'mongoose';
 import validator from 'validator';
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
-} from './student/student.interface';
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+ 
+  StudentModel,
+  TUserName,
+} from './student.interface';
 
-const userNameSchema = new Schema<UserName>({
+
+
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'FirstName is required'],
@@ -17,10 +21,7 @@ const userNameSchema = new Schema<UserName>({
       validator: function (value:string) {
         const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
         return firstNameStr === value;
-        //[if(value !== firstNameStr){
-        // return false
-        //}
-        //return true]
+      
       },
       message:'{VALUE} is not in capitalize format'
     },
@@ -40,7 +41,7 @@ const userNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     required: [true, 'Father Name is required'],
@@ -71,7 +72,7 @@ const guardianSchema = new Schema<Guardian>({
   },
 });
 
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
     type: String,
     required: [true, 'LocalGarduian Name is required'],
@@ -93,8 +94,16 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, required: true, unique: true },
+user:{
+  type:Schema.Types.ObjectId,
+  required:[true,'User ID is required'],
+  unique:true,
+  ref:'User',
+},
+
+
   name: {
     type: userNameSchema,
     required: true,
@@ -115,10 +124,7 @@ const studentSchema = new Schema<Student>({
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    // validate:{
-    //   validator:(value:string)=>validator.isEmail(value),
-    //   message:'{VALUE} is not a valid email'
-    // }
+  
   },
   contactNo: { type: String, required: [true, 'ContactNo is required'] },
 
@@ -143,22 +149,40 @@ const studentSchema = new Schema<Student>({
   guardian: {
     type: guardianSchema,
     required: true,
-   
   },
   localGuardian: {
     type: localGuardianSchema,
     required: true,
-    
   },
   profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active',
-  },
+  isDeleted:{
+    type:Boolean,
+  
+  default:false}
 });
 
-//creating model
-export const StudentModel = model<Student>('Student', studentSchema);
 
-//model<Student>('Student', studentSchema);
+//query middleware
+
+studentSchema.pre('find',function(next){
+  console.log(this);
+})
+
+
+
+
+//creating a custom static methood
+studentSchema.statics.isUserExits = async function(id:string){
+  const exitsingUser = await Student.findOne({id});
+
+  return exitsingUser;
+
+}
+
+
+
+
+
+//creating model
+export const Student = model<TStudent,StudentModel>('Student', studentSchema);
+

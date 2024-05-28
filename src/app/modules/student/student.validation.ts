@@ -64,6 +64,7 @@ const localGuardianValidationSchema = z.object({
 // Student validation schema
 const studentValidationSchema = z.object({
   id: z.string().refine((value) => !!value, 'ID is required'),
+  password: z.string().refine((value) => !!value, 'password is required'),
   name: userNameValidationSchema.refine((value) => !!value, 'Name is required'),
   gender: z
     .enum(['male', 'female', 'other'], {
@@ -88,13 +89,17 @@ const studentValidationSchema = z.object({
     .string()
     .trim()
     .refine((value) => !!value, 'Permanent Address is required'),
-  guardian: guardianValidationSchema.refine((value) => !!value, 'Guardian is required'),
+  guardian: guardianValidationSchema.refine(
+    (value) => !!value,
+    'Guardian is required',
+  ),
   localGuardian: localGuardianValidationSchema.refine(
     (value) => !!value,
     'LocalGuardian is required',
   ),
   profileImg: z.string().optional(),
   isActive: z.enum(['active', 'blocked']).default('active'),
+  isDeleted: z.boolean(),
 });
 
 export default studentValidationSchema;
