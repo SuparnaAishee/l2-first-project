@@ -1,12 +1,13 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { UserServices } from "./user.service";
 import sendResponse from "../../../utils/sendResponse";
 import httpStatus from "http-status";
+import catchAsync from "../../../utils/catchAsync";
 
 
 //controll creating for create-student
-const createStudent = async (req: Request, res: Response,next:NextFunction) => {
-  try {
+const createStudent = catchAsync(async (req , res) => {
+ 
 
 
     //schema validation using joi
@@ -24,11 +25,8 @@ const createStudent = async (req: Request, res: Response,next:NextFunction) => {
       message:'student is created successfully',
       data:result,
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
+  } 
+);
 export const UserControllers ={
   createStudent,
 }

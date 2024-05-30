@@ -118,7 +118,7 @@ user:{
     required: [true, 'Have to fill gender option'],
   },
   dateOfBirth: {
-    type: String,
+    type: Date,
   },
   email: {
     type: String,
