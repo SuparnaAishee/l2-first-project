@@ -75,7 +75,7 @@ export const createStudentValidationSchema = z.object({
           errorMap: () => ({ message: '{VALUE} is not valid' }),
         })
         .refine((value) => !!value, 'Have to fill gender option'),
-      dateOfBirth: z.date().optional(),
+      dateOfBirth: z.string().optional(),
       email: z
         .string()
         .email('{VALUE} is not a valid email')
@@ -103,11 +103,12 @@ export const createStudentValidationSchema = z.object({
         (value) => !!value,
         'LocalGuardian is required',
       ),
+      admissionSemester: z.string(),
       profileImg: z.string().optional(),
     }),
   }),
 });
 
 export const studentValidations = {
- createStudentValidationSchema,
+  createStudentValidationSchema,
 };
